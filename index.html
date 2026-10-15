@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pizzaria Maranata — Cardápio e pedidos pelo WhatsApp</title>
+<meta name="description" content="Cardápio online da Pizzaria Maranata (Bom Jesus – PI): monte sua pizza, escolha bebidas e envie o pedido direto pelo WhatsApp.">
+<meta name="theme-color" content="#1a0f0c">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pizzaria Maranata — Peça pelo WhatsApp">
+<meta property="og:description" content="Monte sua pizza, escolha bebidas e envie o pedido pelo WhatsApp.">
+<meta property="og:image" content="assets/img/logo.jpg">
+<link rel="icon" type="image/jpeg" href="assets/img/logo.jpg">
+<link rel="apple-touch-icon" href="assets/img/logo.jpg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+<header>
+  <div class="brand">
+    <div class="brand-mark"><img src="assets/img/logo.jpg" alt="Logo da Pizzaria Maranata"></div>
+    <div>
+      <div class="brand-name">Pizzaria Maranata</div>
+      <div class="brand-sub">Bom Jesus &mdash; PI</div>
+    </div>
+  </div>
+  <button class="cart-btn" data-act="abrirCarrinho" aria-label="Abrir carrinho">
+    Carrinho <span class="cart-count" id="cartCount" aria-live="polite">0</span>
+  </button>
+</header>
+
+<div class="search-wrap">
+  <input class="search" id="homeSearch" type="search" placeholder="Pesquisar produto" aria-label="Pesquisar produto" data-input="buscaGlobal" autocomplete="off">
+</div>
+
+<main id="home">
+  <div id="catCards">
+    <div class="cat-card" id="cat-pizzas" role="button" tabindex="0" data-act="abrirCategoria" data-a="pizzas">
+      <div class="cat-emoji">🍕</div>
+      <h2 class="cat-title">Pizzas</h2>
+      <div class="cat-sub">As melhores pizzas da região</div>
+    </div>
+    <div class="cat-card" id="cat-porcoes" role="button" tabindex="0" data-act="abrirCategoria" data-a="porcoes">
+      <div class="cat-emoji">🍟</div>
+      <h2 class="cat-title">Porções</h2>
+      <div class="cat-sub">Diversas porções pra compartilhar</div>
+    </div>
+    <div class="cat-card" id="cat-pasteis" role="button" tabindex="0" data-act="abrirCategoria" data-a="pasteis">
+      <div class="cat-emoji">🥟</div>
+      <h2 class="cat-title">Pastéis</h2>
+      <div class="cat-sub">Fritos na hora, diversos sabores</div>
+    </div>
+    <div class="cat-card" id="cat-sucos" role="button" tabindex="0" data-act="abrirCategoria" data-a="sucos">
+      <div class="cat-emoji">🍹</div>
+      <h2 class="cat-title">Sucos</h2>
+      <div class="cat-sub">Naturais, polpas e vitaminas</div>
+    </div>
+    <div class="cat-card" id="cat-bebidas" role="button" tabindex="0" data-act="abrirCategoria" data-a="bebidas">
+      <div class="cat-emoji">🥤</div>
+      <h2 class="cat-title">Bebidas</h2>
+      <div class="cat-sub">Refrigerantes e águas geladas</div>
+    </div>
+  </div>
+  <div id="searchResults" hidden></div>
+</main>
+
+<!-- tela de categoria -->
+<section class="detail" id="detail" aria-label="Categoria">
+  <div class="detail-head">
+    <button class="back-btn" data-act="fecharCategoria">&larr; Voltar ao início</button>
+    <div class="detail-title" id="detailTitle"></div>
+  </div>
+  <div id="itemsList"></div>
+</section>
+
+<!-- barra fixa: adicionar pizza -->
+<div class="pz-bottombar" id="pzBottomBar">
+  <button class="pz-add" data-act="pzAdicionar">🛒 Adicionar ao pedido</button>
+</div>
+
+<!-- barra fixa: fechar pedido -->
+<div class="pz-bottombar" id="fpBar">
+  <button class="pz-add" data-act="abrirCarrinho"><span class="fp-cart">🛒<b id="fpCount">0</b></span> Fechar pedido</button>
+</div>
+
+<!-- sheet de opções (tamanho, sabores, massa, borda, quantidade) -->
+<div class="pz-sheet-overlay" id="pzSheetOverlay" data-act="sheetOverlay">
+  <div class="pz-sheet" role="dialog" aria-modal="true" aria-labelledby="pzSheetTitle">
+    <div class="pz-sheet-title" id="pzSheetTitle"></div>
+    <div id="pzSheetOptions"></div>
+  </div>
+</div>
+
+<!-- tela de ingredientes -->
+<section class="ing-screen" id="ingScreen" aria-label="Ingredientes">
+  <div class="ing-head">
+    <button class="back-btn" data-act="ingFechar">&larr; Voltar</button>
+    <div class="detail-title" id="ingTitle"></div>
+  </div>
+  <div id="ingBase"></div>
+  <div class="ing-sep">
+    <span>Adicione ingredientes</span>
+    <button data-act="ingToggleBusca" aria-label="Buscar ingrediente">🔍</button>
+  </div>
+  <input class="ing-search" id="ingSearch" placeholder="Buscar ingrediente" aria-label="Buscar ingrediente" data-input="ingRender">
+  <div id="ingExtras"></div>
+  <div class="ing-bar">
+    <button data-act="ingSalvar"><span>Salvar</span><span id="ingTotal">R$ 0,00</span></button>
+  </div>
+</section>
+
+<!-- tela Meu Pedido -->
+<section class="pedido-screen" id="pedidoScreen" aria-label="Meu pedido">
+  <div class="pedido-head">
+    <div class="pedido-head-title">Meu Pedido</div>
+    <button class="pedido-close" data-act="fecharCarrinho" aria-label="Fechar">✕</button>
+  </div>
+  <div class="pedido-body">
+    <div id="cartLines"><div class="cart-empty">Seu carrinho está vazio.</div></div>
+    <button class="continuar-link" data-act="fecharCarrinho">← Continuar comprando</button>
+    <div class="pedido-linha"><span>Itens:</span><span id="cartItens">R$ 0,00</span></div>
+    <div class="pedido-linha-total"><span>Valor Total do Pedido:</span><span id="cartTotal">R$ 0,00</span></div>
+
+    <div class="pedido-label">Entrega ou retirada?</div>
+    <div class="entrega-row">
+      <button class="entrega-opt active" id="optEntrega" data-act="pedidoEscolha" data-a="entrega" data-b="Entrega">🛵 Entrega</button>
+      <button class="entrega-opt" id="optRetirada" data-act="pedidoEscolha" data-a="entrega" data-b="Retirada">🏪 Retirada</button>
+    </div>
+
+    <div class="pedido-label">Forma de pagamento</div>
+    <div class="pag-row">
+      <button class="pag-opt active" id="optDinheiro" data-act="pedidoEscolha" data-a="pagamento" data-b="Dinheiro">💵 Dinheiro</button>
+      <button class="pag-opt" id="optPix" data-act="pedidoEscolha" data-a="pagamento" data-b="Pix">⚡ Pix</button>
+      <button class="pag-opt" id="optDebito" data-act="pedidoEscolha" data-a="pagamento" data-b="Cartão de Débito">💳 Débito</button>
+      <button class="pag-opt" id="optCredito" data-act="pedidoEscolha" data-a="pagamento" data-b="Cartão de Crédito">💳 Crédito</button>
+    </div>
+
+    <div class="pedido-erro" id="pedidoErro" role="alert" hidden></div>
+    <button class="checkout-btn" data-act="finalizarPedido">✓ Finalizar Pedido</button>
+    <div class="loja-info" id="lojaInfo"></div>
+  </div>
+</section>
+
+</div>
+
+<noscript><p style="padding:24px;color:#fdf3e7">Ative o JavaScript para ver o cardápio e fazer seu pedido.</p></noscript>
+
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

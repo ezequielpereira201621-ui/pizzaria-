@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --no-audit --no-fund
+      - name: Verificações estáticas (sem recursos externos, arquivos existem)
+        run: npm run check
+      - name: Build do arquivo único
+        run: npm run build:single
+      - name: Testes unitários
+        run: npm test
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Testes de ponta a ponta (fluxo do cliente até o WhatsApp)
+        run: npm run test:e2e
